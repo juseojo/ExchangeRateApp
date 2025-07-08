@@ -32,5 +32,20 @@ class CulViewController: UIViewController {
 		self.title = "환율 계산기"
 		view.backgroundColor = .systemBackground
 		culView.configure(item: exchangeItem)
+		culView.delegate = self
+	}
+}
+
+extension CulViewController: CulViewDelegate {
+	func tapConvertButtonError(errorType: ConvertError) {
+		if errorType == .invalid {
+			let alert = UIAlertController(title: "오류", message: "올바른 숫자를 입력해주세요.", preferredStyle: .alert)
+			alert.addAction(UIAlertAction(title: "확인", style: .default))
+			present(alert, animated: true)
+		} else if errorType == .empty {
+			let alert = UIAlertController(title: "오류", message: "금액을 입력해주세요.", preferredStyle: .alert)
+			alert.addAction(UIAlertAction(title: "확인", style: .default))
+			present(alert, animated: true)
+		}
 	}
 }
