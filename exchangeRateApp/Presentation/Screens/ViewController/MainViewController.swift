@@ -29,6 +29,8 @@ class MainViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		self.navigationController?.navigationBar.isHidden = true
+		mainView.searchBar.delegate = self
+
 		initDataSource()
 		bindingData()
 		exchangeViewModel.requestExchangeRate()
@@ -75,6 +77,12 @@ extension MainViewController {
 				}
 			}
 			.store(in: &cancellables)
+	}
+}
+
+extension MainViewController: UISearchBarDelegate {
+	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+		exchangeViewModel.filterExchangeRate(str: searchText.uppercased())
 	}
 }
 
