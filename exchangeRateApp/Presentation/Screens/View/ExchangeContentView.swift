@@ -15,11 +15,24 @@ class ExchangeContentView: UIView, UIContentView {
 	internal var configuration: UIContentConfiguration
 
 	let countryCodeLabel = UILabel().then {
-		$0.font = .systemFont(ofSize: 22, weight: .semibold)
+		$0.font = .systemFont(ofSize: 16, weight: .medium)
 	}
 
 	let rateLabel = UILabel().then {
-		$0.font = .systemFont(ofSize: 22, weight: .regular)
+		$0.font = .systemFont(ofSize: 16)
+		$0.textAlignment = .right
+	}
+
+	let countryLabel = UILabel().then {
+		$0.font = .systemFont(ofSize: 14)
+		$0.textColor = .gray
+	}
+
+	let contentView = UIView()
+
+	let labelStackView = UIStackView().then {
+		$0.axis = .vertical
+		$0.spacing = 4
 	}
 
 	init(configuration: ExchangeContentConfiguration) {
@@ -36,22 +49,36 @@ class ExchangeContentView: UIView, UIContentView {
 	private func apply(configuration: ExchangeContentConfiguration) {
 		countryCodeLabel.text = configuration.countryCode
 		rateLabel.text = configuration.exchangeRate
+		countryLabel.text = configuration.countryName
 	}
 
 	private func setLayout() {
-		addSubview(countryCodeLabel)
-		addSubview(rateLabel)
 
-		countryCodeLabel.snp.makeConstraints { make in
-			make.top.bottom.equalToSuperview()
-			make.leading.equalToSuperview().offset(8)
-			make.height.equalTo(countryCodeLabel.font.lineHeight + 10)
+		addSubview(contentView)
+
+		[labelStackView, rateLabel].forEach {
+			contentView.addSubview($0)
+		}
+
+		[countryCodeLabel, countryLabel].forEach {
+			labelStackView.addArrangedSubview($0)
+		}
+
+		contentView.snp.makeConstraints { make in
+			make.edges.equalToSuperview()
+			make.height.equalTo(60)
+		}
+
+		labelStackView.snp.makeConstraints { make in
+			make.leading.equalToSuperview().inset(16)
+			make.centerY.equalToSuperview()
 		}
 
 		rateLabel.snp.makeConstraints { make in
-			make.top.bottom.equalToSuperview()
-			make.trailing.equalToSuperview().inset(8)
-			make.height.equalTo(rateLabel.font.lineHeight + 10)
+			make.trailing.equalToSuperview().inset(16)
+			make.centerY.equalToSuperview()
+			make.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).inset(16)
+			make.width.equalTo(120)
 		}
 	}
 }

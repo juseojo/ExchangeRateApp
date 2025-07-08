@@ -18,7 +18,7 @@ class MainViewController: UIViewController {
 	private var cancellables = Set<AnyCancellable>()
 
 	let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, ExchangeRateItem> { (cell, indexPath, item) in
-		var configuration = ExchangeContentConfiguration(countryCode: item.countryCode, exchangeRate: item.rate)
+		var configuration = ExchangeContentConfiguration(countryCode: item.countryCode, exchangeRate: item.rate, countryName: item.countryName)
 		cell.contentConfiguration = configuration
 	}
 
@@ -65,12 +65,20 @@ extension MainViewController {
 		exchangeViewModel.$errorMessage
 			.receive(on: DispatchQueue.main)
 			.sink { [weak self] errorMessage in
-				let alert = UIAlertController(title: "오류", message: "에러메세지 : \(errorMessage ?? "알수 없는 오류입니다.")", preferredStyle: .alert)
-				alert.addAction(UIAlertAction(title: "확인", style: .default))
-				self?.present(alert, animated: true)
+				if errorMessage != nil {
+					let alert = UIAlertController(
+						title: "오류",
+						message: "에러메세지 : \(errorMessage!)",
+						preferredStyle: .alert)
+					alert.addAction(UIAlertAction(title: "확인", style: .default))
+					self?.present(alert, animated: true)
+				}
 			}
 			.store(in: &cancellables)
 	}
 }
 
-
+@available(iOS 18.0, *)
+#Preview {
+	MainViewController()
+}

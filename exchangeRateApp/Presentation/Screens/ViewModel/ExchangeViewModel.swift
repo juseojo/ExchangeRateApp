@@ -18,7 +18,9 @@ class ExchangeViewModel {
 		Task {
 			do {
 				exchangeItems = try await dataService.exchangeFetchData().rates.map {
-					ExchangeRateItem(countryCode: $0.key, rate: String(format: "%.4f", $0.value))
+					ExchangeRateItem(countryCode: $0.key,
+									 rate: String(format: "%.4f", $0.value),
+									 countryName: CountryCode[$0.key] ?? "None")
 				}
 			} catch DataServiceError.decodingError {
 				errorMessage = "decodingError"

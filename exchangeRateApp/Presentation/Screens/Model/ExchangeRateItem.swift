@@ -8,4 +8,5 @@
 struct ExchangeRateItem: Hashable {
 	var countryCode: String
 	var rate: String
+	var countryName: String
 }

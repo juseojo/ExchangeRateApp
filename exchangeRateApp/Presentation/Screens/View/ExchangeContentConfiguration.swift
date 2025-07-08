@@ -10,7 +10,7 @@ import UIKit
 struct ExchangeContentConfiguration: UIContentConfiguration, Hashable {
 	var countryCode: String
 	var exchangeRate: String
-
+	var countryName: String
 	func makeContentView() -> any UIView & UIContentView {
 		return ExchangeContentView(configuration: self)
 	}
