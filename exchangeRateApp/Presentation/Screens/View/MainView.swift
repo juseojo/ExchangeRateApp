@@ -16,12 +16,25 @@ class MainView: UIView {
 		$0.showsVerticalScrollIndicator = false
 	}
 
+	let searchBar = UISearchBar().then {
+		$0.placeholder = "통화 검색"
+		$0.searchBarStyle = .minimal
+	}
+
 	override init(frame: CGRect) {
 		super.init(frame: frame)
+		self.backgroundColor = .systemBackground
+
+		addSubview(searchBar)
+		searchBar.snp.makeConstraints { make in
+			make.top.equalTo(self.safeAreaLayoutGuide)
+			make.leading.trailing.equalToSuperview()
+		}
 
 		addSubview(collectionView)
 		collectionView.snp.makeConstraints { make in
-			make.edges.equalToSuperview()
+			make.top.equalTo(searchBar.snp.bottom)
+			make.leading.trailing.bottom.equalTo(self.safeAreaLayoutGuide)
 		}
 	}
 
