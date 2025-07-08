@@ -12,7 +12,12 @@ import SnapKit
 
 class ExchangeContentView: UIView, UIContentView {
 
-	internal var configuration: UIContentConfiguration
+	internal var configuration: UIContentConfiguration {
+		didSet {
+			guard let newConfig = configuration as? ExchangeContentConfiguration else { return }
+			apply(configuration: newConfig)
+		}
+	}
 
 	let countryCodeLabel = UILabel().then {
 		$0.font = .systemFont(ofSize: 16, weight: .medium)
