@@ -28,8 +28,9 @@ class MainViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		self.navigationController?.navigationBar.isHidden = true
 		mainView.searchBar.delegate = self
+		mainView.collectionView.delegate = self
+		self.title = "환율 정보"
 
 		initDataSource()
 		bindingData()
@@ -77,6 +78,17 @@ extension MainViewController {
 				}
 			}
 			.store(in: &cancellables)
+	}
+}
+
+extension MainViewController: UICollectionViewDelegate {
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		collectionView.deselectItem(at: indexPath, animated: true)
+		guard let exchangeItem = dataSource?.itemIdentifier(for: indexPath) else {
+			return
+		}
+		let vc = CulViewController(exchangeItem: exchangeItem)
+		self.navigationController?.pushViewController(vc, animated: true)
 	}
 }
 
