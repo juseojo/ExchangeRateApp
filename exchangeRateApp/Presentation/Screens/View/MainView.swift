@@ -30,7 +30,7 @@ class MainView: UIView {
 	}
 
 	private func makeCollectionViewLayout() -> UICollectionViewLayout {
-		let config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+		let config = UICollectionLayoutListConfiguration(appearance: .plain)
 		let layout = UICollectionViewCompositionalLayout.list(using: config)
 
 		return layout
