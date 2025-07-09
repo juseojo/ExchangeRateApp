@@ -10,17 +10,7 @@ import UIKit
 import Then
 import SnapKit
 
-enum ConvertError {
-	case empty
-	case invalid
-}
-
-protocol CulViewDelegate: AnyObject {
-	func tapConvertButtonError(errorType: ConvertError)
-}
-
 class CulView: UIView {
-	weak var delegate: CulViewDelegate?
 	var rate = 1.0
 
 	let labelStackView = UIStackView().then {
@@ -64,7 +54,6 @@ class CulView: UIView {
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		setLayout()
-		convertButton.addTarget(self, action: #selector(tapConvertButton), for: .touchUpInside)
 	}
 
 	required init?(coder: NSCoder) {
@@ -109,14 +98,11 @@ class CulView: UIView {
 		rate = Double(item.rate) ?? 1.0
 	}
 
-	@objc func tapConvertButton() {
-		if amountTextField.text == nil || amountTextField.text == "" {
-			delegate?.tapConvertButtonError(errorType: .empty)
-		}
-		else if let num = Double(amountTextField.text!) {
-			resultLabel.text = String(format: "%.2f", num * rate)
-		} else {
-			delegate?.tapConvertButtonError(errorType: .invalid)
-		}
+	func getAmount() -> String {
+		return amountTextField.text ?? ""
+	}
+
+	func setResult(_ result: String) {
+		resultLabel.text = result
 	}
 }
