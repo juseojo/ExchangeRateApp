@@ -34,7 +34,7 @@ class MainViewController: UIViewController {
 
 		initDataSource()
 		bindingData()
-		exchangeViewModel.requestExchangeRate()
+		exchangeViewModel.action!(.requestExchangeRate)
 	}
 }
 
@@ -59,23 +59,18 @@ extension MainViewController {
 	}
 
 	private func bindingData() {
-		exchangeViewModel.$exchangeItems
+		exchangeViewModel.$state
 			.receive(on: DispatchQueue.main)
 			.sink { [weak self] items in
-				self?.updateData(items)
-			}
-			.store(in: &cancellables)
-		exchangeViewModel.$errorMessage
-			.receive(on: DispatchQueue.main)
-			.sink { [weak self] errorMessage in
-				if errorMessage != nil {
+				if items.errorMessage != "" {
 					let alert = UIAlertController(
 						title: "오류",
-						message: "에러메세지 : \(errorMessage!)",
+						message: "에러메세지 : \(items.errorMessage)",
 						preferredStyle: .alert)
 					alert.addAction(UIAlertAction(title: "확인", style: .default))
 					self?.present(alert, animated: true)
 				}
+				self?.updateData(items.exchangeItems)
 			}
 			.store(in: &cancellables)
 	}
@@ -94,7 +89,7 @@ extension MainViewController: UICollectionViewDelegate {
 
 extension MainViewController: UISearchBarDelegate {
 	func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-		exchangeViewModel.filterExchangeRate(str: searchText.uppercased())
+		exchangeViewModel.action!(.filtering(str: searchText.uppercased()))
 	}
 }
 
