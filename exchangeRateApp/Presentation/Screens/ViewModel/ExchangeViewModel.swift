@@ -9,13 +9,32 @@ import Foundation
 
 import Combine
 
-class ExchangeViewModel {
-    let dataService = DataService()
-	@Published var exchangeItems = [ExchangeRateItem]()
-	@Published var errorMessage: String?
-	var originItems = [ExchangeRateItem]()
+class ExchangeViewModel: ViewModelProtocol {
+	struct State {
+		var exchangeItems: [ExchangeRateItem]
+		var errorMessage: String
+	}
 
-	func requestExchangeRate() {
+	enum Action {
+		case requestExchangeRate
+		case filtering(str: String)
+	}
+
+	lazy var action: ((Action) -> Void)? = { [weak self] (action: Action) in
+		guard let self = self else { return }
+		switch action {
+		case .requestExchangeRate:
+			self.requestExchangeRate()
+		case .filtering(let str):
+			self.filterExchangeRate(str: str)
+		}
+	}
+
+	@Published private(set) var state = State(exchangeItems: [], errorMessage: "")
+    let dataService = DataService()
+	private var originItems = [ExchangeRateItem]()
+
+	private func requestExchangeRate() {
 		Task {
 			do {
 				originItems = try await dataService.exchangeFetchData().rates.map {
@@ -23,20 +42,20 @@ class ExchangeViewModel {
 									 rate: String(format: "%.4f", $0.value),
 									 countryName: CountryCode[$0.key] ?? "None")
 				}
-				exchangeItems = originItems
+				state.exchangeItems = originItems
 			} catch DataServiceError.decodingError {
-				errorMessage = "decodingError"
+				state.errorMessage = "decodingError"
 			} catch {
-				errorMessage = "네트워크 에러"
+				state.errorMessage = "네트워크 에러"
 			}
 		}
 	}
 
-	func filterExchangeRate(str: String) {
+	private func filterExchangeRate(str: String) {
 		if str == "" {
-			exchangeItems = originItems
+			state.exchangeItems = originItems
 		} else {
-			exchangeItems = originItems.filter { $0.countryCode.contains(str) || $0.countryName.contains(str) }
+			state.exchangeItems = originItems.filter { $0.countryCode.contains(str) || $0.countryName.contains(str) }
 		}
 	}
 }

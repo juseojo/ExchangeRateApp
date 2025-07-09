@@ -44,7 +44,6 @@ class ExchangeContentView: UIView, UIContentView {
 		self.configuration = configuration
 		super.init(frame: .zero)
 		setLayout()
-		apply(configuration: configuration)
 	}
 
 	required init?(coder: NSCoder) {
