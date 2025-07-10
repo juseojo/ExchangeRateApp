@@ -70,6 +70,11 @@ extension MainViewController {
 					alert.addAction(UIAlertAction(title: "확인", style: .default))
 					self?.present(alert, animated: true)
 				}
+				if items.exchangeItems.isEmpty {
+					self?.mainView.showNoSearch()
+				} else {
+					self?.mainView.hideNoSearch()
+				}
 				self?.updateData(items.exchangeItems)
 			}
 			.store(in: &cancellables)
