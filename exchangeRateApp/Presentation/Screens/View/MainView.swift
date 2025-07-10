@@ -21,6 +21,13 @@ class MainView: UIView {
 		$0.searchBarStyle = .minimal
 	}
 
+	let noSearchLabel = UILabel().then {
+		$0.text = "검색 결과 없음"
+		$0.font = .systemFont(ofSize: 17, weight: .medium)
+		$0.textColor = .gray
+		$0.isHidden = true
+	}
+
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		self.backgroundColor = .systemBackground
@@ -36,6 +43,11 @@ class MainView: UIView {
 			make.top.equalTo(searchBar.snp.bottom)
 			make.leading.trailing.bottom.equalTo(self.safeAreaLayoutGuide)
 		}
+
+		addSubview(noSearchLabel)
+		noSearchLabel.snp.makeConstraints { make in
+			make.centerX.centerY.equalTo(collectionView)
+		}
 	}
 
 	required init?(coder: NSCoder) {
@@ -47,5 +59,13 @@ class MainView: UIView {
 		let layout = UICollectionViewCompositionalLayout.list(using: config)
 
 		return layout
+	}
+
+	func showNoSearch() {
+		noSearchLabel.isHidden = false
+	}
+
+	func hideNoSearch() {
+		noSearchLabel.isHidden = true
 	}
 }
