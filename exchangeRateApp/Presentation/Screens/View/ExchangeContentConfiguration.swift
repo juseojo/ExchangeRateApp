@@ -7,10 +7,13 @@
 
 import UIKit
 
-struct ExchangeContentConfiguration: UIContentConfiguration, Hashable {
+struct ExchangeContentConfiguration: UIContentConfiguration {
 	var countryCode: String
 	var exchangeRate: String
 	var countryName: String
+	var isFavorite: Bool
+	var favoriteAction: ((String) -> Void)?
+
 	func makeContentView() -> any UIView & UIContentView {
 		return ExchangeContentView(configuration: self)
 	}

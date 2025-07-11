@@ -18,6 +18,7 @@ class ExchangeContentView: UIView, UIContentView {
 			apply(configuration: newConfig)
 		}
 	}
+    var favoriteAction: ((String) -> Void)?
 
 	let countryCodeLabel = UILabel().then {
 		$0.font = .systemFont(ofSize: 16, weight: .medium)
@@ -40,10 +41,19 @@ class ExchangeContentView: UIView, UIContentView {
 		$0.spacing = 4
 	}
 
+	lazy var favoriteButton = UIButton().then {
+		let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
+		$0.setImage(UIImage(systemName: "star", withConfiguration: config), for: .normal)
+		$0.setImage(UIImage(systemName: "star.fill", withConfiguration: config), for: .selected)
+		$0.tintColor = .systemYellow
+		$0.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
+	}
+
 	init(configuration: ExchangeContentConfiguration) {
 		self.configuration = configuration
 		super.init(frame: .zero)
 		setLayout()
+		apply(configuration: configuration)
 	}
 
 	required init?(coder: NSCoder) {
@@ -54,13 +64,19 @@ class ExchangeContentView: UIView, UIContentView {
 		countryCodeLabel.text = configuration.countryCode
 		rateLabel.text = configuration.exchangeRate
 		countryLabel.text = configuration.countryName
+		favoriteButton.isSelected = configuration.isFavorite
+		favoriteAction = configuration.favoriteAction
+	}
+
+	@objc private func favoriteButtonTapped() {
+		favoriteAction?(countryCodeLabel.text ?? "")
 	}
 
 	private func setLayout() {
 
 		addSubview(contentView)
 
-		[labelStackView, rateLabel].forEach {
+		[labelStackView, rateLabel, favoriteButton].forEach {
 			contentView.addSubview($0)
 		}
 
@@ -79,10 +95,15 @@ class ExchangeContentView: UIView, UIContentView {
 		}
 
 		rateLabel.snp.makeConstraints { make in
-			make.trailing.equalToSuperview().inset(16)
 			make.centerY.equalToSuperview()
 			make.leading.greaterThanOrEqualTo(labelStackView.snp.trailing).inset(16)
 			make.width.equalTo(120)
+		}
+
+		favoriteButton.snp.makeConstraints { make in
+			make.leading.equalTo(rateLabel.snp.trailing).offset(8)
+			make.centerY.equalToSuperview()
+			make.trailing.equalToSuperview().inset(16)
 		}
 	}
 }

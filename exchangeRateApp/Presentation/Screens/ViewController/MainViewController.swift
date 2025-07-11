@@ -17,10 +17,7 @@ class MainViewController: UIViewController {
 	var dataSource: DataSource?
 	private var cancellables = Set<AnyCancellable>()
 
-	let cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, ExchangeRateItem> { (cell, indexPath, item) in
-		var configuration = ExchangeContentConfiguration(countryCode: item.countryCode, exchangeRate: item.rate, countryName: item.countryName)
-		cell.contentConfiguration = configuration
-	}
+	var cellRegistration: UICollectionView.CellRegistration<UICollectionViewListCell, ExchangeRateItem>!
 
 	override func loadView() {
 		view = mainView
@@ -28,6 +25,17 @@ class MainViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		cellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, ExchangeRateItem> { [weak self] (cell, indexPath, item) in
+			let configuration = ExchangeContentConfiguration(
+				countryCode: item.countryCode,
+				exchangeRate: item.rate,
+				countryName: item.countryName,
+				isFavorite: item.isFavorite,
+				favoriteAction: self?.favoriteToggle
+			)
+
+			cell.contentConfiguration = configuration
+		}
 		mainView.searchBar.delegate = self
 		mainView.collectionView.delegate = self
 		self.title = "환율 정보"
@@ -78,6 +86,10 @@ extension MainViewController {
 				self?.updateData(items.exchangeItems)
 			}
 			.store(in: &cancellables)
+	}
+
+	@objc func favoriteToggle(code: String) {
+		exchangeViewModel.action!(.toggleFavorite(code: code))
 	}
 }
 

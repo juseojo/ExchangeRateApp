@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import CoreData
 
 enum DataServiceError: Error {
 	case invalidURL
@@ -55,5 +57,40 @@ final class DataService {
 			print("fetchDataError: \(error)")
 			throw error
 		}
+	}
+
+	func toggleFavorites(str: String) {
+		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+		let saved: [Favorites]? = favoritesRead()
+		let favorites = Favorites(context: context)
+
+		if saved == nil {
+			favorites.favoriteCode = str
+		}
+		else if let target = saved?.first(where: { $0.favoriteCode == str }) {
+			context.delete(target)
+		} else {
+			favorites.favoriteCode = str
+		}
+
+		do {
+			try context.save()
+		} catch {
+			print("Save failed: \(error)")
+		}
+	}
+
+	func favoritesRead() -> [Favorites]? {
+		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+		let fetchRequest: NSFetchRequest<Favorites> = Favorites.fetchRequest()
+
+		do {
+			let favorites = try context.fetch(fetchRequest)
+			return favorites
+		} catch {
+			print("Fetch failed: \(error)")
+			return nil
+		}
+
 	}
 }
