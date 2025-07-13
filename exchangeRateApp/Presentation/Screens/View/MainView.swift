@@ -12,7 +12,7 @@ import Then
 
 class MainView: UIView {
 	lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout()).then {
-		$0.backgroundColor = .systemBackground
+		$0.backgroundColor = .background
 		$0.showsVerticalScrollIndicator = false
 	}
 
@@ -24,13 +24,13 @@ class MainView: UIView {
 	let noSearchLabel = UILabel().then {
 		$0.text = "검색 결과 없음"
 		$0.font = .systemFont(ofSize: 17, weight: .medium)
-		$0.textColor = .gray
+		$0.textColor = .secondaryText
 		$0.isHidden = true
 	}
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
-		self.backgroundColor = .systemBackground
+		self.backgroundColor = .background
 
 		addSubview(searchBar)
 		searchBar.snp.makeConstraints { make in

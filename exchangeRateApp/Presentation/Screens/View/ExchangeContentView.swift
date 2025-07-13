@@ -22,16 +22,18 @@ class ExchangeContentView: UIView, UIContentView {
 
 	let countryCodeLabel = UILabel().then {
 		$0.font = .systemFont(ofSize: 16, weight: .medium)
+		$0.textColor = .text
 	}
 
 	let rateLabel = UILabel().then {
 		$0.font = .systemFont(ofSize: 16)
 		$0.textAlignment = .right
+		$0.textColor = .text
 	}
 
 	let countryLabel = UILabel().then {
 		$0.font = .systemFont(ofSize: 14)
-		$0.textColor = .gray
+		$0.textColor = .secondaryText
 	}
 
 	let contentView = UIView()
@@ -45,7 +47,7 @@ class ExchangeContentView: UIView, UIContentView {
 		let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
 		$0.setImage(UIImage(systemName: "star", withConfiguration: config), for: .normal)
 		$0.setImage(UIImage(systemName: "star.fill", withConfiguration: config), for: .selected)
-		$0.tintColor = .systemYellow
+		$0.tintColor = .favorite
 		$0.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
 	}
 
@@ -54,6 +56,7 @@ class ExchangeContentView: UIView, UIContentView {
 		super.init(frame: .zero)
 		setLayout()
 		apply(configuration: configuration)
+		self.backgroundColor = .cellBackground
 	}
 
 	required init?(coder: NSCoder) {
