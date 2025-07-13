@@ -33,7 +33,7 @@ class CulViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		self.title = "환율 계산기"
-		view.backgroundColor = .systemBackground
+		view.backgroundColor = .background
 		culView.configure(item: exchangeItem)
 		culView.convertButton.addTarget(self, action: #selector(tapConvertButton), for: .touchUpInside)
 		dataBinding()
