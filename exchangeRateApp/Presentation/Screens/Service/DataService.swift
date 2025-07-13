@@ -17,6 +17,8 @@ enum DataServiceError: Error {
 }
 
 final class DataService {
+	let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
 	private enum RequestType {
 		case exchange
 
@@ -81,7 +83,6 @@ final class DataService {
 	}
 
 	func favoritesRead() -> [Favorites]? {
-		let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 		let fetchRequest: NSFetchRequest<Favorites> = Favorites.fetchRequest()
 
 		do {
@@ -91,6 +92,81 @@ final class DataService {
 			print("Fetch failed: \(error)")
 			return nil
 		}
+	}
 
+	func beforeRatesRead() -> [BeforeData] {
+		let fetchRequest: NSFetchRequest<BeforeData> = BeforeData.fetchRequest()
+
+		do {
+			let recentlyData = try context.fetch(fetchRequest)
+			return recentlyData
+		} catch {
+			print("Fetch failed: \(error)")
+			return []
+		}
+	}
+
+	func todayRatesRead() -> [TodayData] {
+		let fetchRequest: NSFetchRequest<TodayData> = TodayData.fetchRequest()
+
+		do {
+			let recentlyData = try context.fetch(fetchRequest)
+			return recentlyData
+		} catch {
+			print("Fetch failed: \(error)")
+			return []
+		}
+	}
+
+	func saveBeforeRates(rates: [String: Double]) {
+		for (code, rate) in rates {
+			let beforeData = BeforeData(context: context)
+
+			beforeData.code = code
+			beforeData.rate = rate
+		}
+
+		do {
+			try context.save()
+		} catch {
+			print("save failed: \(error)")
+		}
+	}
+
+	func saveTodayRates(rates: [String: Double]) {
+		for (code, rate) in rates {
+			let todayData = TodayData(context: context)
+
+			todayData.code = code
+			todayData.rate = rate
+		}
+
+		do {
+			try context.save()
+		} catch {
+			print("save failed: \(error)")
+		}
+	}
+
+	func deleteAllBeforeRates() {
+		let deleteRequest = NSBatchDeleteRequest(fetchRequest: BeforeData.fetchRequest())
+
+		do {
+			try context.execute(deleteRequest)
+			try context.save()
+		} catch {
+			print("delete failed: \(error)")
+		}
+	}
+
+	func deleteAllTodayRates() {
+		let deleteRequest = NSBatchDeleteRequest(fetchRequest: TodayData.fetchRequest())
+
+		do {
+			try context.execute(deleteRequest)
+			try context.save()
+		} catch {
+			print("delete failed: \(error)")
+		}
 	}
 }
