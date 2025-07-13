@@ -12,6 +12,7 @@ struct ExchangeContentConfiguration: UIContentConfiguration {
 	var exchangeRate: String
 	var countryName: String
 	var isFavorite: Bool
+	var beforeExchangeRate: Double
 	var favoriteAction: ((String) -> Void)?
 
 	func makeContentView() -> any UIView & UIContentView {

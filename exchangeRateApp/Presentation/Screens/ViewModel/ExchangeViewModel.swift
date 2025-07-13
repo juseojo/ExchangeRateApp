@@ -34,17 +34,56 @@ class ExchangeViewModel: ViewModelProtocol {
 	}
 
 	@Published private(set) var state = State(exchangeItems: [], errorMessage: "")
-    let dataService = DataService()
+	let dataService = DataService()
 	private var originItems = [ExchangeRateItem]()
 
 	private func requestExchangeRate() {
 		Task {
 			do {
-				// 데이터 가져오기
-				originItems = try await dataService.exchangeFetchData().rates.map {
-					ExchangeRateItem(countryCode: $0.key,
-									 rate: String(format: "%.4f", $0.value),
-									 countryName: CountryCode[$0.key] ?? "None")
+				// 날짜 체크
+				let now = Date().timeIntervalSince1970
+				let refreshDate = UserDefaults.standard.object(forKey: "refreshDate") as? TimeInterval ?? Date().timeIntervalSince1970
+				var beforeData = dataService.beforeRatesRead()
+				var todayData = dataService.todayRatesRead()
+
+				if now - refreshDate >= -0.01 {
+					// 데이터 갱신
+					let data = try await dataService.exchangeFetchData()
+					var todayRates = [String : Double]()
+					for item in todayData {
+						todayRates[item.code ?? "None"] = item.rate
+					}
+					UserDefaults.standard.set(data.refreshTime, forKey: "refreshDate")
+
+					// 전날 데이터 = 오늘데이터
+					dataService.deleteAllBeforeRates()
+					if todayRates.isEmpty {
+						dataService.saveBeforeRates(rates: data.rates)
+					} else {
+						dataService.saveBeforeRates(rates: todayRates)
+					}
+					beforeData = dataService.beforeRatesRead()
+
+					// 오늘데이터 = 갱신 데이터
+					dataService.deleteAllTodayRates()
+					dataService.saveTodayRates(rates: data.rates)
+					todayData = dataService.todayRatesRead()
+				}
+
+				// 오늘 데이터 등록
+				originItems = todayData.map {
+					ExchangeRateItem(countryCode: $0.code ?? "None",
+									 rate: String(format: "%.4f", $0.rate),
+									 countryName: CountryCode[$0.code ?? "None"] ?? "None")
+				}
+
+				// 등록된 데이터에서 beforeRate 설정
+				originItems = originItems.map { data in
+					var newData = data
+
+					newData.beforeRate = beforeData.first(where: { $0.code == data.countryCode })?.rate ?? 0.0
+
+					return newData
 				}
 
 				// isFavorit true 설정
