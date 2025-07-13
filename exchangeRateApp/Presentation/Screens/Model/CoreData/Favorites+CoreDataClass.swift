@@ -2,7 +2,7 @@
 //  Favorites+CoreDataClass.swift
 //  exchangeRateApp
 //
-//  Created by seongjun cho on 7/10/25.
+//  Created by seongjun cho on 7/12/25.
 //
 //
 

@@ -62,7 +62,13 @@ class ExchangeContentView: UIView, UIContentView {
 
 	private func apply(configuration: ExchangeContentConfiguration) {
 		countryCodeLabel.text = configuration.countryCode
-		rateLabel.text = configuration.exchangeRate
+		if (Double(configuration.exchangeRate) ?? 0.0) - configuration.beforeExchangeRate > 0.01 {
+			rateLabel.text = configuration.exchangeRate + " ⬆️"
+		} else if (Double(configuration.exchangeRate) ?? 0.0)  - configuration.beforeExchangeRate <= -0.01 {
+			rateLabel.text = configuration.exchangeRate + " ⬇️"
+		} else {
+			rateLabel.text = configuration.exchangeRate
+		}
 		countryLabel.text = configuration.countryName
 		favoriteButton.isSelected = configuration.isFavorite
 		favoriteAction = configuration.favoriteAction

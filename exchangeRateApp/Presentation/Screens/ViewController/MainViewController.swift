@@ -31,6 +31,7 @@ class MainViewController: UIViewController {
 				exchangeRate: item.rate,
 				countryName: item.countryName,
 				isFavorite: item.isFavorite,
+				beforeExchangeRate: item.beforeRate,
 				favoriteAction: self?.favoriteToggle
 			)
 
