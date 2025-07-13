@@ -21,11 +21,12 @@ class CulView: UIView {
 
 	let countryCodeLabel = UILabel().then {
 		$0.font = .systemFont(ofSize: 24, weight: .bold)
+		$0.textColor = .text
 	}
 
 	let countryLabel = UILabel().then {
 		$0.font = .systemFont(ofSize: 16)
-		$0.textColor = .gray
+		$0.textColor = .secondaryText
 	}
 
 	let amountTextField = UITextField().then {
@@ -33,13 +34,14 @@ class CulView: UIView {
 		$0.keyboardType = .decimalPad
 		$0.textAlignment = .center
 		$0.placeholder = "금액을 입력하세요."
+		$0.textColor = .secondaryLabel
 	}
 
 	let convertButton = UIButton().then {
-		$0.backgroundColor = .systemBlue
+		$0.backgroundColor = .button
 		$0.setTitle("환율 계산", for: .normal)
 		$0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
-		$0.titleLabel?.textColor = .white
+		$0.titleLabel?.textColor = .text
 		$0.layer.cornerRadius = 8
 		$0.layer.masksToBounds = true
 	}
@@ -49,6 +51,7 @@ class CulView: UIView {
 		$0.textAlignment = .center
 		$0.numberOfLines = 0
 		$0.text = "계산 결과가 여기에 표시됩니다"
+		$0.textColor = .text
 	}
 
 	override init(frame: CGRect) {
