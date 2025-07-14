@@ -12,7 +12,7 @@
 
 ## 📸 스크린샷
 
-<img src="exchangeRateApp/Presentaion/Resource/example.png" width=400>
+<img src="exchangeRateApp/Presentation/Resource/example.png" width=400>
 
 ## 🛠️ 사용된 기술
 
