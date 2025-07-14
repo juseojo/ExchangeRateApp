@@ -169,4 +169,74 @@ final class DataService {
 			print("delete failed: \(error)")
 		}
 	}
+
+	func deleteAllLastVCs() {
+		let deleteRequest = NSBatchDeleteRequest(fetchRequest: LastVCs.fetchRequest())
+
+		do {
+			try context.execute(deleteRequest)
+			try context.save()
+		} catch {
+			print("delete failed: \(error)")
+		}
+	}
+
+	func saveLastVCs(vcs: [UIViewController]) {
+        deleteAllLastVCs()
+		let lastVCs = LastVCs(context: context)
+		var vcStrings: [String] = []
+
+		for vc in vcs {
+			if vc is MainViewController {
+				vcStrings.append("Main")
+			} else if let culVC = vc as? CulViewController {
+				do {
+					// 문자열로 정보들 인코딩
+					let itemData = try JSONEncoder().encode(culVC.exchangeItem)
+					let itemString = String(data: itemData, encoding: .utf8) ?? ""
+					vcStrings.append("Cul:" + itemString)
+				} catch {
+					print("Failed to encode ExchangeRateItem: \(error)")
+				}
+			}
+		}
+		lastVCs.vcs = vcStrings
+
+		do {
+			try context.save()
+		} catch {
+			print("save failed: \(error)")
+		}
+	}
+
+	func readLastVCs() -> [UIViewController] {
+		let fetchRequest: NSFetchRequest<LastVCs> = LastVCs.fetchRequest()
+
+		do {
+			let lastVCsData = try context.fetch(fetchRequest)
+			guard let vcStrings = lastVCsData.first?.vcs else { return [MainViewController()] }
+			var vcs: [UIViewController] = []
+
+			for vcString in vcStrings {
+				if vcString == "Main" {
+					vcs.append(MainViewController())
+				} else if vcString.starts(with: "Cul:") {
+					let itemString = String(vcString.dropFirst(4))
+
+					if let itemData = itemString.data(using: .utf8) {
+						do {
+							let item = try JSONDecoder().decode(ExchangeRateItem.self, from: itemData)
+							vcs.append(CulViewController(exchangeItem: item))
+						} catch {
+							print("Failed to decode ExchangeRateItem: \(error)")
+						}
+					}
+				}
+			}
+
+			return vcs.isEmpty ? [MainViewController()] : vcs
+		} catch {
+			return [MainViewController()]
+		}
+	}
 }

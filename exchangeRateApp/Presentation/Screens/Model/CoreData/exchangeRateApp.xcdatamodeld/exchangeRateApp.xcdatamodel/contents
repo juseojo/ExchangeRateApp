@@ -7,6 +7,9 @@
     <entity name="Favorites" representedClassName="Favorites" syncable="YES">
         <attribute name="favoriteCode" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="LastVCs" representedClassName="LastVCs" syncable="YES">
+        <attribute name="vcs" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="[String]"/>
+    </entity>
     <entity name="TodayData" representedClassName="TodayData" syncable="YES">
         <attribute name="code" optional="YES" attributeType="String"/>
         <attribute name="rate" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>

@@ -10,17 +10,26 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 	var window: UIWindow?
-
+	let dataService = DataService()
 
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 		guard let windowScene = (scene as? UIWindowScene) else { return }
 
 		let window = UIWindow(windowScene: windowScene)
-		let vc = MainViewController()
-		let navVC = UINavigationController(rootViewController: vc)
-
-		window.rootViewController = navVC
-		navVC.navigationBar.prefersLargeTitles = true
+		var vcs = dataService.readLastVCs()
+		var navVC: UINavigationController?
+		if vcs.isEmpty {
+			vcs = [MainViewController()]
+		}
+		for (index, vc) in vcs.enumerated() {
+			if index == 0 {
+				navVC = UINavigationController(rootViewController: vc)
+				navVC?.navigationBar.prefersLargeTitles = true
+				window.rootViewController = navVC
+			} else {
+				navVC?.pushViewController(vc, animated: false)
+			}
+		}
 		self.window = window
 		window.makeKeyAndVisible()
 	}
@@ -54,8 +63,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 		// Save changes in the application's managed object context when the application transitions to the background.
 		(UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+		guard let windowScene = scene as? UIWindowScene,
+			  let window = windowScene.windows.first else {
+			return
+		}
+		dataService.saveLastVCs(vcs: (window.rootViewController as? UINavigationController)?
+			.viewControllers ?? [MainViewController()])
 	}
 
 
 }
-
